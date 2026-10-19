@@ -1,0 +1,42 @@
+{
+  "name": "kaltra-outpost",
+  "version": "1.1.0",
+  "private": false,
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./doors/sdk": "./src/doors/sdk.ts",
+    "./doors/registry": "./src/doors/registry.ts",
+    "./doors/dev": "./src/doors/dev.ts",
+    "./config": "./src/config.ts",
+    "./signature": "./src/signature.ts",
+    "./store/schema": "./src/store/schema.ts",
+    "./errors": "./src/errors.ts",
+    "./proxy/upstream": "./src/proxy/upstream.ts"
+  },
+  "scripts": {
+    "dev": "wrangler dev --config wrangler.dev.jsonc --port 8787 --var KALTRA_ENGINE_URL:http://localhost:8788",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "types": "wrangler types",
+    "postinstall": "wrangler types",
+    "vector": "node scripts/gen-signature-vector.mjs",
+    "call": "node scripts/call.mjs",
+    "dev:engine": "node scripts/dev-engine.mjs",
+    "dev:tunnel": "cloudflared tunnel --url http://localhost:8787",
+    "chat": "node scripts/chat.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@cloudflare/workers-types": "^5.20260922.1",
+    "typescript": "^5.9.0",
+    "vitest": "^4.1.0",
+    "wrangler": "^4.136.3"
+  },
+  "allowScripts": {
+    "workerd@1.20260815.1": true,
+    "workerd@1.20260921.1": true
+  }
+}

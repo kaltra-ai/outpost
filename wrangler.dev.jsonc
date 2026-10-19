@@ -1,0 +1,27 @@
+{
+  // Local development configuration (npm run dev). Same as wrangler.test.jsonc plus the queue consumer, which the vitest pool cannot host.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "kaltra-outpost-dev",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-22",
+  "d1_databases": [{ "binding": "STORE", "database_name": "kaltra-store-test", "database_id": "test" }],
+  "kv_namespaces": [{ "binding": "TOKEN_CACHE", "id": "test" }],
+  "queues": {
+    "producers": [
+      { "binding": "INBOUND", "queue": "kaltra-inbound" },
+      { "binding": "INBOUND_DLQ", "queue": "kaltra-inbound-dlq" }
+    ],
+    "consumers": [
+      { "queue": "kaltra-inbound", "max_batch_size": 1, "max_retries": 6, "dead_letter_queue": "kaltra-inbound-dlq" }
+    ]
+  },
+  "vars": {
+    "KALTRA_PROTOCOL": "1.1",
+    "KALTRA_ENGINE_URL": "https://engine.test.invalid",
+    "KALTRA_REGION_HINT": "enam",
+    "KALTRA_OUTPOST_KEY_ID": "outpost-test-k1",
+    "KALTRA_UNAVAILABLE_TEXT": "I cannot reach the brain right now. I will try again later.",
+    "KALTRA_ENGINE_PUBLIC_KEYS": "[{\"key_id\":\"engine-test-k1\",\"public_key\":\"h12R0sY6ov51NYsfp8Pt8k9T42yGozQ4a2xCkvHvg9Y\"}]",
+    "KALTRA_CONFIG": "{\"instances\": [{\"id\": \"inst-sp\", \"module\": \"sharepoint\", \"kind\": \"source\", \"scope\": {\"site\": \"contoso.sharepoint.com,site-id\"}, \"audience\": \"everyone\", \"credential\": \"graph-main\", \"oauth_scope\": \"https://graph.microsoft.com/.default\"}, {\"id\": \"docs-main\", \"module\": \"markdown-folder\", \"kind\": \"source\", \"scope\": {\"prefix\": \"\", \"description\": \"the company documentation: services, client procedures, support, tools\"}, \"audience\": \"everyone\", \"credential\": \"docs-public\"}, {\"id\": \"docs-directors\", \"module\": \"markdown-folder\", \"kind\": \"source\", \"scope\": {\"prefix\": \"directors/\", \"description\": \"director-only notes: pricing, discounts, finance, hiring\"}, \"audience\": [\"directors\"], \"credential\": \"docs-public\"}], \"credentials\": [{\"name\": \"anthropic-main\", \"type\": \"static_header\", \"allowed_hosts\": [\"api.anthropic.com\"], \"allowed_methods\": [\"POST\"], \"allowed_request_headers\": [\"content-type\", \"anthropic-version\"], \"config\": {\"header_name\": \"x-api-key\"}}, {\"name\": \"graph-main\", \"type\": \"oauth2_client_credentials\", \"allowed_hosts\": [\"graph.microsoft.com\"], \"allowed_methods\": [\"GET\"], \"allowed_request_headers\": [\"accept\", \"consistencylevel\"], \"scopes\": [\"https://graph.microsoft.com/.default\"], \"config\": {\"tenant_id\": \"tenant-test\", \"client_id\": \"client-test\", \"token_endpoint\": \"https://login.microsoftonline.com/tenant-test/oauth2/v2.0/token\"}}, {\"name\": \"slack-main-bot\", \"type\": \"static_header\", \"allowed_hosts\": [\"slack.com\", \"files.slack.com\"], \"allowed_methods\": [\"POST\", \"GET\"], \"allowed_request_headers\": [\"content-type\"], \"config\": {\"header_name\": \"authorization\", \"prefix\": \"Bearer \"}}, {\"name\": \"slack-main-signing\", \"type\": \"hmac_key\", \"allowed_hosts\": [], \"allowed_methods\": []}, {\"name\": \"dev-door-secret\", \"type\": \"hmac_key\", \"allowed_hosts\": [], \"allowed_methods\": []}, {\"name\": \"docs-public\", \"type\": \"none\", \"allowed_hosts\": [\"docs.test.invalid\"], \"allowed_methods\": [\"GET\"], \"allowed_request_headers\": [\"accept\"]}], \"doors\": [{\"kind\": \"slack\", \"instance\": \"main\", \"credential\": \"slack-main-bot\", \"signing_credential\": \"slack-main-signing\", \"settings\": {\"thread_dms\": false}}, {\"kind\": \"dev\", \"instance\": \"qa\", \"credential\": \"dev-door-secret\", \"signing_credential\": \"dev-door-secret\"}]}"
+  }
+}

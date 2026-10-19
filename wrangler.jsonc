@@ -1,0 +1,43 @@
+{
+  // kaltra-outpost: deployed once per tenant, into the tenant's own Cloudflare account.
+  // This file is the TEMPLATE. The operator generates wrangler.<tenant>.jsonc from it
+  // (name, database_id, custom domain, engine URL, KALTRA_CONFIG) and deploys with --config.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "kaltra-outpost",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-22",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  "routes": [{ "pattern": "REPLACE_AT_DEPLOY.example.com", "custom_domain": true }],
+  "triggers": { "crons": ["17 * * * *"] },
+  "d1_databases": [
+    { "binding": "STORE", "database_name": "kaltra-store", "database_id": "REPLACE_AT_DEPLOY" }
+  ],
+  "kv_namespaces": [
+    { "binding": "TOKEN_CACHE", "id": "REPLACE_AT_DEPLOY" }
+  ],
+  "queues": {
+    "producers": [
+      { "binding": "INBOUND", "queue": "kaltra-inbound" },
+      { "binding": "INBOUND_DLQ", "queue": "kaltra-inbound-dlq" }
+    ],
+    "consumers": [
+      { "queue": "kaltra-inbound", "max_batch_size": 1, "max_retries": 6, "dead_letter_queue": "kaltra-inbound-dlq" }
+    ]
+  },
+  "vars": {
+    "KALTRA_PROTOCOL": "1.1",
+    "KALTRA_ENGINE_URL": "REPLACE_AT_DEPLOY",
+    "KALTRA_REGION_HINT": "REPLACE_AT_DEPLOY",
+    "KALTRA_OUTPOST_KEY_ID": "REPLACE_AT_DEPLOY",
+    "KALTRA_UNAVAILABLE_TEXT": "I cannot reach the brain right now. I will try again later.",
+    // Engine public keys are not secrets. JSON: [{ "key_id": "...", "public_key": "<raw Ed25519, base64url>" }], up to two.
+    "KALTRA_ENGINE_PUBLIC_KEYS": "[]",
+    // JSON: { "instances": [...], "credentials": [...], "doors": [...] } per docs/protocol-v1.md section 6.
+    "KALTRA_CONFIG": "{}"
+  }
+  // Secrets (wrangler secret put): KALTRA_OUTPOST_PRIVATE_KEY,
+  // KALTRA_ACCESS_AUD, KALTRA_CRED_<NAME> per credential (+ optional KALTRA_CRED_<NAME>_PREV).
+  // Large-body routes: raise limits.cpu_ms if measured buffering cost requires it.
+}

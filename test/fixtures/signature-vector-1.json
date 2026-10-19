@@ -1,0 +1,19 @@
+{
+  "key_id": "engine-test-k1",
+  "public_key_raw_b64url": "h12R0sY6ov51NYsfp8Pt8k9T42yGozQ4a2xCkvHvg9Y",
+  "request": {
+    "method": "POST",
+    "url": "https://outpost.example.test/v1/store/query?mode=read",
+    "body": "{\"statements\":[{\"sql\":\"SELECT 1\",\"params\":[]}],\"mode\":\"read\"}"
+  },
+  "headers": {
+    "Content-Digest": "sha-256=:7yfA64ME3gdkzHuvmPXOBRS5fGa+sG/GQhBYyHM9BVY=:",
+    "Kaltra-Protocol": "1.1",
+    "Kaltra-Key-Id": "engine-test-k1",
+    "Kaltra-Timestamp": "1700000000",
+    "Kaltra-Nonce": "AAECAwQFBgcICQoLDA0ODw",
+    "Signature-Input": "sig1=(\"@method\" \"@authority\" \"@path\" \"@query\" \"content-digest\" \"kaltra-protocol\" \"kaltra-key-id\" \"kaltra-timestamp\" \"kaltra-nonce\");created=1700000000;keyid=\"engine-test-k1\";alg=\"ed25519\"",
+    "Signature": "sig1=:fKd3YHOthMxfgoeSre3Xc8nKUOFqkDBQUqeuye0VyLh8H4dfF4lf2oQDn6bCbcNhiCwuITY04AzeU8L0/QHaDA==:"
+  },
+  "signature_base": "\"@method\": POST\n\"@authority\": outpost.example.test\n\"@path\": /v1/store/query\n\"@query\": ?mode=read\n\"content-digest\": sha-256=:7yfA64ME3gdkzHuvmPXOBRS5fGa+sG/GQhBYyHM9BVY=:\n\"kaltra-protocol\": 1.1\n\"kaltra-key-id\": engine-test-k1\n\"kaltra-timestamp\": 1700000000\n\"kaltra-nonce\": AAECAwQFBgcICQoLDA0ODw\n\"@signature-params\": (\"@method\" \"@authority\" \"@path\" \"@query\" \"content-digest\" \"kaltra-protocol\" \"kaltra-key-id\" \"kaltra-timestamp\" \"kaltra-nonce\");created=1700000000;keyid=\"engine-test-k1\";alg=\"ed25519\""
+}

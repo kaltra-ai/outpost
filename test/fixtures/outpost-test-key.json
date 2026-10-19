@@ -1,0 +1,6 @@
+{
+  "note": "TEST-ONLY Ed25519 keypair for the outpost side in the vitest pool. Never used by any real outpost.",
+  "key_id": "outpost-test-k1",
+  "public_key_raw_b64url": "1aUQ9hhXxtWRJ7RN5QsjdRTQBZn702yqAOx4znVjRRY",
+  "private_key_pkcs8_b64url": "MC4CAQAwBQYDK2VwBCIEIFER62QDnH7g1UOjS9QhSOCP5A-JaSqlNRNm5XbQMHPd"
+}

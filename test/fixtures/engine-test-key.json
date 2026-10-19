@@ -1,0 +1,6 @@
+{
+  "note": "TEST-ONLY Ed25519 keypair for the vitest pool. Never used by any real engine or outpost.",
+  "key_id": "engine-test-k1",
+  "public_key_raw_b64url": "h12R0sY6ov51NYsfp8Pt8k9T42yGozQ4a2xCkvHvg9Y",
+  "private_key_pkcs8_b64url": "MC4CAQAwBQYDK2VwBCIEIK1Bd1mi_GSgCsnUvHTNgzWHGDJbBuD5SE9XJ_3oD8m6"
+}

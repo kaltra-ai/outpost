@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.wrangler/
+.dev.vars
+*.log
+.DS_Store
+worker-configuration.d.ts
+# per-tenant deploy configs (generated from wrangler.jsonc, hold tenant hostnames and ids)
+wrangler.*.jsonc
+!wrangler.dev.jsonc
+!wrangler.test.jsonc
+# per-tenant entry points: register the tenant's door modules, then re-export the worker (hold private package names)
+src/entry.*.ts
