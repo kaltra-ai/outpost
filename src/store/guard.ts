@@ -16,7 +16,11 @@ export interface GuardFailure {
 const READ_VERBS = new Set(["SELECT", "WITH"]);
 const WRITE_VERBS = new Set(["INSERT", "UPDATE", "DELETE"]);
 const DDL_VERBS = new Set(["CREATE", "ALTER", "DROP"]);
-const FORBIDDEN_WORDS = /\b(PRAGMA|ATTACH|DETACH|VACUUM|TRIGGER|VIEW|VIRTUAL|REINDEX)\b/i;
+const FORBIDDEN_WORDS = /\b(PRAGMA|ATTACH|DETACH|VACUUM|TRIGGER|VIEW|VIRTUAL|REINDEX)\b/gi;
+// The one virtual table a tenant store may hold: an FTS5 index in the engine namespace (retrieval, engine spec section 15).
+const FTS5_TABLE = /^\s*CREATE\s+VIRTUAL\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?k_[a-z0-9_]+\s+USING\s+fts5\s*\(/i;
+// External-content FTS5 tables (content=, content_rowid=) would index another table, including outpost-owned ones: never allowed.
+const FTS5_EXTERNAL = /\bcontent(?:_rowid)?\s*=/i;
 // A read-mode statement (SELECT, WITH) may not carry a write or DDL verb anywhere: a CTE can hide a DELETE (review 2026-09-23, finding 2).
 const WRITE_WORDS = /\b(INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|ALTER|UPSERT)\b/i;
 const IDENT = String.raw`("[^"]+"|\[[^\]]+\]|` + "`[^`]+`" + String.raw`|[A-Za-z_][A-Za-z0-9_]*)`;
@@ -37,7 +41,10 @@ export function guardStatement(sql: string, allowed: StatementKind[]): GuardResu
   if (trimmed.length === 0) return { ok: false, reason: "empty_statement" };
   const bare = stripStrings(trimmed);
   if (bare.includes(";")) return { ok: false, reason: "multiple_statements" };
-  if (FORBIDDEN_WORDS.test(bare)) return { ok: false, reason: "forbidden_keyword" };
+  const isFts5 = FTS5_TABLE.test(bare) && !FTS5_EXTERNAL.test(trimmed);
+  for (const m of bare.matchAll(FORBIDDEN_WORDS)) {
+    if (!(isFts5 && m[1].toUpperCase() === "VIRTUAL")) return { ok: false, reason: "forbidden_keyword" };
+  }
 
   const verb = (bare.match(/^\s*([A-Za-z]+)/)?.[1] ?? "").toUpperCase();
   const kind: StatementKind | null = READ_VERBS.has(verb) ? "read" : WRITE_VERBS.has(verb) ? "write" : DDL_VERBS.has(verb) ? "ddl" : null;

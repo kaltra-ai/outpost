@@ -61,8 +61,8 @@ function parseUsage(body: ArrayBuffer): Usage {
     const j = JSON.parse(new TextDecoder().decode(body)) as { usage?: Record<string, number>; model?: string };
     const u = j.usage ?? {};
     return {
-      input_tokens: u.input_tokens ?? u.prompt_tokens ?? null,
-      output_tokens: u.output_tokens ?? u.completion_tokens ?? null,
+      input_tokens: u.input_tokens ?? u.prompt_tokens ?? u.inputTokens ?? null,
+      output_tokens: u.output_tokens ?? u.completion_tokens ?? u.outputTokens ?? null,
       model: typeof j.model === "string" ? j.model : null,
     };
   } catch {

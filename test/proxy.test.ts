@@ -40,6 +40,16 @@ describe("POST /v1/llm/<credential>", () => {
     expect(captured[0].redirect).toBe("manual");
   });
 
+  it("reads Bedrock Converse usage (inputTokens/outputTokens) into the Kaltra-Usage header; the model stays null when the body has none", async () => {
+    stubUpstream(() => Response.json({ output: { message: { role: "assistant", content: [{ text: "hi" }] } }, stopReason: "end_turn", usage: { inputTokens: 30, outputTokens: 9, totalTokens: 39 } }));
+    const res = await callRaw("/v1/llm/anthropic-main", {
+      body: JSON.stringify({ messages: [{ role: "user", content: [{ text: "hi" }] }] }),
+      headers: { "Kaltra-Upstream-Method": "POST", "Kaltra-Upstream-Path": "/model/us.amazon.nova-pro-v1%3A0/converse", "Kaltra-Upstream-Header-content-type": "application/json" },
+    });
+    expect(res.status).toBe(200);
+    expect(JSON.parse(res.headers.get("Kaltra-Usage")!)).toEqual({ input_tokens: 30, output_tokens: 9, model: null });
+  });
+
   it("refuses an unknown credential, a disallowed method, a disallowed header, and a path escape", async () => {
     stubUpstream(() => Response.json({}));
     const base = { body: "{}", headers: { "Kaltra-Upstream-Method": "POST", "Kaltra-Upstream-Path": "/v1/messages" } };
@@ -130,7 +140,7 @@ describe("POST /v1/source/<instance> with a credential of type none (outpost 0.2
     const meta = await call("/v1/meta");
     expect(meta.status).toBe(200);
     expect(meta.json.credential_types).toContain("none");
-    expect(meta.json.outpost_version).toBe("1.1.0");
+    expect(meta.json.outpost_version).toBe("1.2.0");
     expect((meta.json.instances as { id: string }[]).map((i) => i.id)).toEqual(expect.arrayContaining(["docs-main", "docs-directors"]));
   });
 });

@@ -1,6 +1,6 @@
 // Deployed configuration (docs/protocol-v1.md section 6). Read-only at runtime; never engine-writable.
 
-export const OUTPOST_VERSION = "1.1.0"; // 1.1: doors are modules (src/doors/sdk.ts); the dev door is the one in this repo
+export const OUTPOST_VERSION = "1.2.0"; // 1.2: a tenant store may hold an FTS5 index table in the k_ namespace (guard allowance); usage parsing knows the Bedrock Converse field names
 // "none" (protocol 1.2 item, additive): no secret, nothing injected; allow-lists still apply. For public hosts such as a documentation bucket.
 export const CREDENTIAL_TYPES = ["static_header", "oauth2_client_credentials", "hmac_key", "none"] as const;
 
